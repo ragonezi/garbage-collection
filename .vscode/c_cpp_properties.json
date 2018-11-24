@@ -1,0 +1,27 @@
+{
+    "configurations": [{
+        "name": "Win32",
+        "includePath": [
+            "${workspaceFolder}/**",
+            "F:\\Programas\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include\\c++",
+            "F:\\Programas\\ConnectorC\\include"
+        ],
+        "defines": [
+            "_DEBUG",
+            "UNICODE",
+            "_UNICODE"
+        ],
+        "compilerPath": "F:\\Programas\\MinGW\\bin\\gcc.exe",
+        "cStandard": "c11",
+        "cppStandard": "c++17",
+        "intelliSenseMode": "clang-x64",
+        "browse": {
+            "path": [
+                "${workspaceFolder}",
+                "F:\\Programas\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include\\c++",
+                "F:\\Programas\\ConnectorC\\include"
+            ]
+        }
+    }],
+    "version": 4
+}
