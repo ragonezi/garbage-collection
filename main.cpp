@@ -1,33 +1,25 @@
 #include <stdlib.h>
 #include <iostream>
-#include "user.h"
 #include "mysql.h"
+#include "user.h"
+#include "conexao.h"
 
-int main(void)
+int main()
 {
-	MYSQL mysql;
-
-	if (mysql_init(&mysql) == NULL)
+	try
 	{
-		printf("\nInitialization error\n");
-		std::cout << "Press enter to continue!\n";
-		system("PAUSE");
-		return 0;
+		Conexao *con = new Conexao();
 	}
-
-	if (mysql_real_connect(&mysql, "localhost", "root", "teste", NULL, 0, NULL, 0) == NULL)
+	catch (const char *e)
 	{
-		fprintf(stderr, "%s\n", mysql_error(&mysql));
-		mysql_close(&mysql);
-		system("PAUSE");
-		exit(1);
+		std::cerr << e << std::endl;
 	}
-
-	printf("Client version: %s", mysql_get_client_info());
-	printf("\nServer version: %s", mysql_get_server_info(&mysql));
-	mysql_close(&mysql);
+	catch (...)
+	{
+		std::cerr << "Erro inesperado!" << std::endl;
+	}
 	system("PAUSE");
-	return 1;
+	return 0;
 }
 
 void tela_inicial()

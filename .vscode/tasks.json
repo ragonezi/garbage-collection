@@ -9,6 +9,7 @@
         "args": [
             "-g",
             "main.cpp",
+            "conexao.cpp",
             "libmysql.dll"
         ],
         "group": {
