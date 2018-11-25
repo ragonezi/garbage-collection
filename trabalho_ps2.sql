@@ -108,15 +108,15 @@ DROP TABLE IF EXISTS `solicitacao`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `solicitacao` (
   `id_solicitacao` int(11) NOT NULL AUTO_INCREMENT,
-  `id_doador` int(11) NOT NULL,
+  `id_doacao` int(11) NOT NULL,
   `id_receptor` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `proposta` varchar(200) DEFAULT NULL,
   `resposta` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id_solicitacao`),
-  KEY `solicitacao_doador_idx` (`id_doador`),
   KEY `solicitacao_receptor_idx` (`id_receptor`),
-  CONSTRAINT `solicitacao_doador` FOREIGN KEY (`id_doador`) REFERENCES `usuario` (`id_usuario`),
+  KEY `solicitacao_doacao_idx` (`id_doacao`),
+  CONSTRAINT `solicitacao_doacao` FOREIGN KEY (`id_doacao`) REFERENCES `doacao` (`id_doacao`),
   CONSTRAINT `solicitacao_receptor` FOREIGN KEY (`id_receptor`) REFERENCES `usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -167,4 +167,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-24 18:34:36
+-- Dump completed on 2018-11-25 14:59:45
