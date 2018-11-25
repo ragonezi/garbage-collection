@@ -13,7 +13,7 @@ Conexao::Conexao()
 
 void Conexao::abrirConexao()
 {
-    if (mysql_real_connect(&this->instanciaConexao, "localhost", this->usuarioBanco, this->senhaBanco, NULL, 0, NULL, 0) == NULL)
+    if (mysql_real_connect(&this->instanciaConexao, this->host, this->usuarioBanco, this->senhaBanco, this->nomeBanco, this->porta, this->unixSocket, this->flag) == NULL)
     {
         mysql_error(&this->instanciaConexao);
         throw "Database login error";

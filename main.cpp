@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <iostream>
-#include "mysql.h"
 #include "user.h"
 #include "conexao.h"
 
@@ -9,6 +8,7 @@ int main()
 	try
 	{
 		Conexao *con = new Conexao();
+		std::cout << "OK, conectado ao banco!" << std::endl;
 	}
 	catch (const char *e)
 	{

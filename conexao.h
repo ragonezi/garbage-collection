@@ -10,8 +10,13 @@ class Conexao
 {
   private:
     MYSQL instanciaConexao;
+    const char *host = "localhost";
     const char *usuarioBanco = "root";
     const char *senhaBanco = "teste";
+    const char *nomeBanco = "trabalho_ps2";
+    const int porta = 3306;
+    const char *unixSocket = NULL;
+    unsigned int flag = 0;
 
   public:
     Conexao();
