@@ -17,6 +17,10 @@ Usuario::Usuario(std::string nome, std::string documento, std::string telefone, 
     this->setSolicitacoes(solicitacoes);
 }
 
+Usuario::~Usuario()
+{
+}
+
 void Usuario::setResiduosInteresse(std::vector<Residuo> residuosInteresse)
 {
     this->residuosInteresse = residuosInteresse;

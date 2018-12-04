@@ -19,6 +19,7 @@ public:
   Usuario(std::string, std::string, std::string, std::string);
   Usuario(std::string, std::string, std::string, std::string, std::vector<Residuo>);
   Usuario(std::string, std::string, std::string, std::string, std::vector<Residuo>, std::vector<Doacao>, std::vector<Solicitacao>);
+  virtual ~Usuario();
 
   void setSenha(std::string);
   void setResiduosInteresse(std::vector<Residuo>);

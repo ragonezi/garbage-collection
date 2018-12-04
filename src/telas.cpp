@@ -28,8 +28,8 @@ Usuario &Telas::login()
     std::cout << "\nDigite a senha: ";
     std::getline(std::cin, senha);
     // Funcao para buscar o registro no banco
-    Usuario usuario = Usuario("Teste", documento, senha, "Teste");
-    Telas::menuPrincipal(usuario);
+    Usuario *usuario = new Usuario("Teste", documento, senha, "Teste");
+    Telas::menuPrincipal(*usuario);
 }
 
 Usuario &Telas::cadastro()
@@ -65,12 +65,12 @@ Usuario &Telas::cadastro()
             senhaIncorreta = false;
         }
     } while (senhaIncorreta);
-    Usuario usuario = Usuario(nome, documento, senha, endereco);
+    Usuario *usuario = new Usuario(nome, documento, senha, endereco);
     // Funcao para cadastrar o usuario no banco
-    Telas::menuPrincipal(usuario);
+    Telas::menuPrincipal(*usuario);
 }
 
-Usuario &Telas::menuPrincipal(Usuario usuario)
+void Telas::menuPrincipal(Usuario &usuario)
 {
     int opcao;
     bool opcaoIncorreta;
@@ -120,23 +120,66 @@ void Telas::cadastrarResiduo(Usuario &usuario)
     }
     else
     {
-        std::cout << "\n\n1.Residuo Solido" << std::endl;
+        std::cout << "1.Residuo Solido" << std::endl;
         std::cout << "2.Residuo Liquido" << std::endl;
         std::cout << "Digite a opcao desejada: ";
         opcao = Telas::getOpcao(1, 2);
-        switch (opcao)
+        Residuo residuo = Telas::escolherResiduo(opcao);
+        std::cout << "Digite a quantidade: ";
+        int quantidade = Telas::getNumeroPositivo();
+        Doador *doador = new Doador(usuario.getNome(), usuario.getDocumento(), usuario.getTelefone(), usuario.getEndereco());
+        Doacao doacao = Doacao(residuo, *doador, quantidade, 1);
+        std::cout << "Nome: " << doacao.getResiduo().getNome() << ", Quantidade: " << doacao.getQuantidade() << std::endl;
+        std::cout << "1.Confirmar o cadastro" << std::endl;
+        std::cout << "2.Cancelar o cadastro" << std::endl;
+        std::cout << "Digite a opcao desejada: ";
+        opcao = Telas::getOpcao(1, 2);
+        if (opcao == 1)
         {
-        case 1:
-            //Abre a lista de residuos solidos e o usuario deve escolher o que deseja
-        case 2:
-            //Abre a lista de residuos liquidos e o usuario deve escolher o que deseja
+            std::cout << "Cadastro concluido!";
         }
+        else
+        {
+            std::cout << "Cadastro cancelado!";
+        }
+        Telas::voltarMenuPrincipal(usuario);
     }
+}
+
+Residuo Telas::escolherResiduo(int tipoResiduo)
+{
+    // Temporario
+    Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
+    Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
+    Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
+    Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
+    std::vector<Residuo> residuosSolidos;
+    std::vector<Residuo> residuosLiquidos;
+    residuosSolidos.push_back(r1);
+    residuosSolidos.push_back(r2);
+    residuosLiquidos.push_back(r3);
+    residuosLiquidos.push_back(r4);
+    std::vector<Residuo> residuos = tipoResiduo == 1 ? residuosSolidos : residuosLiquidos;
+    int i = 0;
+    for (std::vector<Residuo>::iterator it = residuos.begin(); it != residuos.end(); ++it)
+    {
+        i++;
+        std::cout << i << "." << it->getNome() << std::endl;
+    }
+    std::cout << "Digite o numero do residuo: ";
+    int opcao = Telas::getOpcao(1, i);
+    return residuos[opcao - 1];
 }
 
 void Telas::logout(Usuario &usuario)
 {
-    delete[] & usuario;
+    delete &usuario;
+}
+
+void Telas::voltarMenuPrincipal(Usuario &usuario)
+{
+    system(PAUSE);
+    Telas::menuPrincipal(usuario);
 }
 
 void Telas::cabecalho()
@@ -156,21 +199,46 @@ int Telas::getOpcao(int primeira, int ultima)
     bool opcaoIncorreta;
     do
     {
-        opcaoIncorreta = Telas::getNumero(opcao);
-        if (!(opcao >= primeira && opcao <= ultima))
+        opcaoIncorreta = !Telas::numero(opcao) || !(opcao >= primeira && opcao <= ultima);
+        if (opcaoIncorreta)
         {
-            opcaoIncorreta = true;
             std::cout << "\nOpcao incorreta! Digite novamente: ";
-        }
-        else
-        {
-            opcaoIncorreta = false;
         }
     } while (opcaoIncorreta);
     return opcao;
 }
 
-int Telas::getNumero(int &opcao)
+int Telas::getNumeroPositivo()
+{
+    int numero;
+    bool opcaoIncorreta;
+    do
+    {
+        opcaoIncorreta = !Telas::numero(numero) || numero < 0;
+        if (opcaoIncorreta)
+        {
+            std::cout << "\nOpcao incorreta! Digite novamente: ";
+        }
+    } while (opcaoIncorreta);
+    return numero;
+}
+
+int Telas::getNumero()
+{
+    int numero;
+    bool opcaoIncorreta;
+    do
+    {
+        opcaoIncorreta = !Telas::numero(numero);
+        if (opcaoIncorreta)
+        {
+            std::cout << "\nOpcao incorreta! Digite novamente: ";
+        }
+    } while (opcaoIncorreta);
+    return numero;
+}
+
+int Telas::numero(int &opcao)
 {
     std::string opcaoDigitada;
 
