@@ -35,6 +35,10 @@ public:
   void addSolicitacao(Solicitacao);
   void addDoacao(Doacao);
 
+  void removeResiduoInteresse(int);
+  void removeSolicitacao(int);
+  void removeDoacao(int);
+
   void imprimirResiduosInteresse();
 };
 

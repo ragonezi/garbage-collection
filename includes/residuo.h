@@ -9,6 +9,7 @@ private:
   std::string nome;
   std::string armazenamento;
   int tipo;
+  int idResiduo;
 
 public:
   Residuo();

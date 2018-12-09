@@ -11,19 +11,20 @@ class Doacao
 private:
   Residuo residuo;
   Doador doador;
-  int quantidade;
+  std::string quantidade;
   unsigned int disponibilidade;
+  int idDoacao;
 
 public:
   Doacao();
-  Doacao(Residuo, Doador, int, unsigned int);
+  Doacao(Residuo, Doador, std::string, unsigned int);
   void setResiduo(Residuo);
   void setDoador(Doador);
-  void setQuantidade(int);
+  void setQuantidade(std::string);
   void setDisponibilidade(unsigned int);
   Residuo getResiduo();
   Doador getDoador();
-  int getQuantidade();
+  std::string getQuantidade();
   int getDisponibilidade();
 };
 

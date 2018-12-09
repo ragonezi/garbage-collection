@@ -2,7 +2,7 @@
 
 Doacao::Doacao() {}
 
-Doacao::Doacao(Residuo residuo, Doador doador, int quantidade, unsigned int disponibilidade)
+Doacao::Doacao(Residuo residuo, Doador doador, std::string quantidade, unsigned int disponibilidade)
 {
     this->setResiduo(residuo);
     this->setDoador(doador);
@@ -20,7 +20,7 @@ void Doacao::setDoador(Doador doador)
     this->doador = doador;
 }
 
-void Doacao::setQuantidade(int quantidade)
+void Doacao::setQuantidade(std::string quantidade)
 {
     this->quantidade = quantidade;
 }
@@ -40,7 +40,7 @@ Doador Doacao::getDoador()
     return this->doador;
 }
 
-int Doacao::getQuantidade()
+std::string Doacao::getQuantidade()
 {
     return this->quantidade;
 }
