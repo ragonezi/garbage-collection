@@ -66,6 +66,21 @@ void Usuario::addResiduoInteresse(Residuo residuoInteresse)
     this->residuosInteresse.push_back(residuoInteresse);
 }
 
+void Usuario::removeDoacao(int indiceDoacao)
+{
+    this->doacoes.erase(this->doacoes.begin() + indiceDoacao);
+}
+
+void Usuario::removeSolicitacao(int indiceDoacao)
+{
+    this->solicitacoes.erase(this->solicitacoes.begin() + indiceDoacao);
+}
+
+void Usuario::removeResiduoInteresse(int indiceDoacao)
+{
+    this->residuosInteresse.erase(this->residuosInteresse.begin() + indiceDoacao);
+}
+
 void Usuario::imprimirResiduosInteresse()
 {
     for (std::vector<Residuo>::iterator i = this->getResiduosInteresse().begin(); i != this->getResiduosInteresse().end(); ++i)

@@ -4,6 +4,7 @@
 #include "includes/usuario.h"
 #include "includes/residuo.h"
 #include "includes/telas.h"
+#include "includes/auxiliar.h"
 
 int main()
 {

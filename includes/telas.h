@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdlib.h>
+#include "auxiliar.h"
 #include "usuario.h"
 #include "residuo.h"
 #include "doacao.h"
@@ -22,17 +23,25 @@ public:
   static void logout(Usuario &);
   static Usuario &cadastro();
   static void menuPrincipal(Usuario &);
-  static void voltarMenuPrincipal(Usuario &);
   static void cadastrarResiduo(Usuario &);
 
+  static int escolherTipoResiduo();
   static Residuo escolherResiduo(int);
-  static void cabecalho();
-  static void limparTela();
 
-  static int getOpcao(int, int);
-  static int getNumero();
-  static int getNumeroPositivo();
-  static int numero(int &);
+  static void cadastrarSolicitacao(Usuario &);
+
+  static int escolherDoacao(std::vector<Doacao>);
+  static void dadosDoacao(Doacao);
+
+  static void doacoesCadastradas(Usuario &);
+  static int escolherMinhaDoacao(std::vector<Doacao>);
+
+  static void listaSolicitacoes(Usuario &);
+  static void dadosSolicitacao(Solicitacao, bool);
+
+  static void rankingDoadores(Usuario &);
+
+  static void cabecalho();
 };
 
 #endif

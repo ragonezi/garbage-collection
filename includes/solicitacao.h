@@ -12,7 +12,10 @@ private:
   Receptor receptor;
   std::string proposta;
   std::string resposta;
+  std::string dataEntrega;
+  unsigned int tipoEntrega;
   unsigned int status;
+  int idSolicitacao;
 
 public:
   Solicitacao();
@@ -25,12 +28,16 @@ public:
   void setStatus(unsigned int);
   void setProposta(std::string);
   void setResposta(std::string);
+  void setTipoEntrega(int);
+  void setDataEntrega(std::string);
 
   Doacao getDoacao();
   Receptor getReceptor();
   std::string getProposta();
   std::string getResposta();
   int getStatus();
+  int getTipoEntrega();
+  std::string getDataEntrega();
 };
 
 #endif

@@ -11,6 +11,7 @@ private:
   std::string documento;
   std::string telefone;
   std::string endereco;
+  int idPessoa;
 
 public:
   Pessoa();
