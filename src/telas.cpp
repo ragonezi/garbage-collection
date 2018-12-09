@@ -1,13 +1,10 @@
 #include "../includes/telas.h"
 
 // Temporario
-std::vector<Residuo> residuosSolidos;
-std::vector<Residuo> residuosLiquidos;
-std::vector<Doacao> doacoesResiduosLiquidos;
-std::vector<Doacao> doacoesResiduosSolidos;
 
 std::vector<Residuo> rSolidos()
 {
+    std::vector<Residuo> residuosSolidos;
     Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
     Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
     residuosSolidos.push_back(r1);
@@ -17,6 +14,7 @@ std::vector<Residuo> rSolidos()
 
 std::vector<Residuo> rLiquidos()
 {
+    std::vector<Residuo> residuosLiquidos;
     Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
     Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
     residuosLiquidos.push_back(r3);
@@ -26,6 +24,7 @@ std::vector<Residuo> rLiquidos()
 
 std::vector<Doacao> dSolidos()
 {
+    std::vector<Doacao> doacoesResiduosSolidos;
     Doador *doador1 = new Doador("Teste", "1000", "10", "10");
     Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
     Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
@@ -38,6 +37,7 @@ std::vector<Doacao> dSolidos()
 
 std::vector<Doacao> dLiquidos()
 {
+    std::vector<Doacao> doacoesResiduosLiquidos;
     Doador *doador1 = new Doador("Teste", "1000", "10", "10");
     Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
     Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
@@ -253,6 +253,7 @@ void Telas::cadastrarSolicitacao(Usuario &usuario)
         Doacao doacaoSelecionada = doacoesDisponiveis[indiceDoacao];
 
         Telas::dadosDoacao(doacaoSelecionada);
+        std::cout << std::endl;
         std::cout << "Deseja receber esse residuo?" << std::endl;
         int confirmacao = Auxiliar::confirmar();
 
@@ -278,7 +279,8 @@ void Telas::cadastrarSolicitacao(Usuario &usuario)
             if (confirmacao == 1)
             {
                 Receptor receptor = Receptor(usuario.getNome(), usuario.getDocumento(), usuario.getTelefone(), usuario.getEndereco());
-                Solicitacao novaSolicitacao = Solicitacao(doacaoSelecionada, receptor, 1);
+                Doacao *novaDoacao = new Doacao(doacaoSelecionada.getResiduo(), doacaoSelecionada.getDoador(), doacaoSelecionada.getQuantidade(), doacaoSelecionada.getDisponibilidade());
+                Solicitacao novaSolicitacao = Solicitacao(*novaDoacao, receptor, 1);
                 novaSolicitacao.setTipoEntrega(opcaoEndereco);
                 novaSolicitacao.setDataEntrega(dataEntrega);
                 usuario.addSolicitacao(novaSolicitacao);
@@ -364,14 +366,64 @@ void Telas::listaSolicitacoes(Usuario &usuario)
 
     if (opcaoEscolhida == 1)
     {
+        std::vector<Doacao> doacoes;
+        std::vector<Solicitacao> solicitacoes = usuario.getSolicitacoes();
+        for (std::vector<Solicitacao>::iterator it = solicitacoes.begin(); it != solicitacoes.end(); ++it)
+        {
+            Doacao d1 = Doacao();
+            doacoes.push_back(it->getDoacao());
+        }
+        int indiceSolicitacao = Telas::escolherDoacao(doacoes);
+
+        if (indiceSolicitacao != -1)
+        {
+            Telas::dadosSolicitacao(usuario.getSolicitacoes()[indiceSolicitacao], true);
+
+            std::cout << "0. Voltar" << std::endl;
+            Auxiliar::getOpcao(0, 0);
+        }
     }
     else if (opcaoEscolhida == 2)
     {
+        // Buscar as solicitacoes das doacoes
+        int indiceDoacao = Telas::escolherDoacao(usuario.getDoacoes());
+
+        if (indiceDoacao != -1)
+        {
+            // Fazer consulta no banco e informar se existem solicitacoes
+
+            Receptor *r1 = new Receptor("Teste", "1000", "10", "10");
+            Solicitacao s1 = Solicitacao(usuario.getDoacoes()[indiceDoacao], *r1, 1, "Teste", "Teste");
+
+            Telas::dadosSolicitacao(s1, false);
+            std::cout << "0. Voltar" << std::endl;
+
+            Auxiliar::getOpcao(0, 0);
+        }
+    }
+    Telas::menuPrincipal(usuario);
+}
+
+void Telas::dadosSolicitacao(Solicitacao solicitacao, bool minhaSolicitacao)
+{
+    std::string nome, telefone;
+    if (minhaSolicitacao)
+    {
+        nome = solicitacao.getDoacao().getDoador().getNome();
+        telefone = solicitacao.getDoacao().getDoador().getTelefone();
     }
     else
     {
-        Telas::menuPrincipal(usuario);
+        nome = solicitacao.getReceptor().getNome();
+        telefone = solicitacao.getReceptor().getTelefone();
     }
+    std::cout << std::endl;
+    std::cout << nome << std::endl;
+    std::cout << solicitacao.getDoacao().getResiduo().getNome();
+    std::cout << ", " << solicitacao.getDoacao().getQuantidade() << std::endl;
+    std::cout << "Local: " << solicitacao.getDoacao().getDoador().getEndereco() << std::endl;
+    std::cout << "Data: " << solicitacao.getDataEntrega() << std::endl;
+    std::cout << "Telefone: " << telefone << std::endl;
 }
 
 void Telas::rankingDoadores(Usuario &usuario)
@@ -384,8 +436,6 @@ void Telas::rankingDoadores(Usuario &usuario)
         std::cout << it->getNome();
         std::cout << ", x doacoes" << std::endl;
     }
-
-    std::cout << " 0.Voltar" << std::endl;
 
     Auxiliar::pausarSistema();
     Telas::menuPrincipal(usuario);

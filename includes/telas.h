@@ -37,6 +37,7 @@ public:
   static int escolherMinhaDoacao(std::vector<Doacao>);
 
   static void listaSolicitacoes(Usuario &);
+  static void dadosSolicitacao(Solicitacao, bool);
 
   static void rankingDoadores(Usuario &);
 

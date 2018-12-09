@@ -9,11 +9,11 @@
 class Doacao
 {
 private:
+  int idDoacao;
   Residuo residuo;
   Doador doador;
   std::string quantidade;
   unsigned int disponibilidade;
-  int idDoacao;
 
 public:
   Doacao();
