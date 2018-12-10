@@ -385,8 +385,17 @@ void Telas::doacoesCadastradas(Usuario &usuario)
 
         if (opcao == 1)
         {
-            usuario.removeDoacao(indiceDoacao);
-            std::cout << "Doacao excluida com sucesso!" << std::endl;
+            Gerenciamento conexao = Gerenciamento();
+
+            if (conexao.alterarStatusDoacao(usuario.getDoacoes()[indiceDoacao].getIdDoacao(), 2))
+            {
+                usuario.removeDoacao(indiceDoacao);
+                std::cout << "Doacao excluida com sucesso!" << std::endl;
+            }
+            else
+            {
+                std::cout << "Erro ao excluir a doacao!" << std::endl;
+            }
             Auxiliar::pausarSistema();
         }
     }
@@ -406,42 +415,113 @@ void Telas::listaSolicitacoes(Usuario &usuario)
 
     if (opcaoEscolhida == 1)
     {
-        std::vector<Doacao> doacoes;
-        std::vector<Solicitacao> solicitacoes = usuario.getSolicitacoes();
-        for (std::vector<Solicitacao>::iterator it = solicitacoes.begin(); it != solicitacoes.end(); ++it)
-        {
-            Doacao d1 = Doacao();
-            doacoes.push_back(it->getDoacao());
-        }
-        int indiceSolicitacao = Telas::escolherDoacao(doacoes);
-
-        if (indiceSolicitacao != -1)
-        {
-            Telas::dadosSolicitacao(usuario.getSolicitacoes()[indiceSolicitacao], true);
-
-            std::cout << "0. Voltar" << std::endl;
-            Auxiliar::getOpcao(0, 0);
-        }
+        Telas::listarMinhasSolicitacoes(usuario);
     }
     else if (opcaoEscolhida == 2)
     {
-        // Buscar as solicitacoes das doacoes
-        int indiceDoacao = Telas::escolherDoacao(usuario.getDoacoes());
+        Telas::listarSolicitacoesDoacao(usuario);
+    }
+}
 
-        if (indiceDoacao != -1)
+void Telas::listarSolicitacoesDoacao(Usuario &usuario)
+{
+    // Buscar as solicitacoes das doacoes
+    int indiceDoacao = Telas::escolherDoacao(usuario.getDoacoes());
+
+    if (indiceDoacao != -1)
+    {
+        // Fazer consulta no banco e informar se existem solicitacoes
+
+        Gerenciamento conexao = Gerenciamento();
+
+        std::vector<Solicitacao> solicitacoesDoacao = conexao.getSolicitacoes(usuario.getDoacoes()[indiceDoacao].getIdDoacao(), false);
+
+        int indiceSolicitacao = Telas::escolherSolicitacao(solicitacoesDoacao, false);
+
+        if (indiceSolicitacao != -1)
         {
-            // Fazer consulta no banco e informar se existem solicitacoes
+            Telas::dadosSolicitacao(solicitacoesDoacao[indiceSolicitacao], false);
 
-            Receptor *r1 = new Receptor("Teste", "1000", "10", "10");
-            Solicitacao s1 = Solicitacao(usuario.getDoacoes()[indiceDoacao], *r1, 1, "Teste", "Teste");
+            std::cout << " 0.Voltar" << std::endl;
+            std::cout << " 1.Cancelar" << std::endl;
+            std::cout << " 2.Aprovar" << std::endl;
+            int opcaoEscolhida = Auxiliar::getOpcao(0, 2);
 
-            Telas::dadosSolicitacao(s1, false);
-            std::cout << "0. Voltar" << std::endl;
+            if (opcaoEscolhida != 0)
+            {
 
-            Auxiliar::getOpcao(0, 0);
+                if (conexao.alterarStatusSolicitacao(solicitacoesDoacao[indiceSolicitacao].getIdSolicitacao(), solicitacoesDoacao[indiceSolicitacao].getDoacao().getIdDoacao(), opcaoEscolhida + 1))
+                {
+                    std::cout << "Solicitacao alterada com sucesso!" << std::endl;
+                    usuario.removeSolicitacao(indiceSolicitacao);
+                }
+                else
+                {
+                    std::cout << "Erro ao alterar solicitacao!" << std::endl;
+                }
+                Auxiliar::pausarSistema();
+            }
         }
     }
     Telas::menuPrincipal(usuario);
+}
+
+void Telas::listarMinhasSolicitacoes(Usuario &usuario)
+{
+    std::vector<Doacao> doacoes;
+    std::vector<Solicitacao> solicitacoes = usuario.getSolicitacoes();
+
+    int indiceSolicitacao = Telas::escolherSolicitacao(solicitacoes, true);
+
+    if (indiceSolicitacao != -1)
+    {
+        Telas::dadosSolicitacao(solicitacoes[indiceSolicitacao], true);
+
+        std::cout << " 0.Voltar" << std::endl;
+        std::cout << " 1.Excluir" << std::endl;
+        int opcaoEscolhida = Auxiliar::getOpcao(0, 1);
+
+        if (opcaoEscolhida == 1)
+        {
+            Gerenciamento conexao = Gerenciamento();
+            if (conexao.alterarStatusSolicitacao(solicitacoes[indiceSolicitacao].getIdSolicitacao(), "0", 2))
+            {
+                usuario.removeSolicitacao(indiceSolicitacao);
+                std::cout << "Solicitacao excluida com sucesso!" << std::endl;
+            }
+            else
+            {
+                std::cout << "Erro ao excluir solicitacao!" << std::endl;
+            }
+            Auxiliar::pausarSistema();
+        }
+    }
+    Telas::menuPrincipal(usuario);
+}
+
+int Telas::escolherSolicitacao(std::vector<Solicitacao> solicitacoes, bool minhasSolicitacoes)
+{
+    // A doacao deve ser de acordo com os residuos de interesse
+    int i = 0;
+    std::cout << std::endl;
+    std::cout << " 0.Voltar" << std::endl;
+    for (std::vector<Solicitacao>::iterator it = solicitacoes.begin(); it != solicitacoes.end(); ++it)
+    {
+        i++;
+        std::cout << " " << i << "." << it->getDoacao().getResiduo().getNome();
+        std::cout << ", " << it->getDoacao().getQuantidade();
+        std::string pessoa = minhasSolicitacoes ? it->getDoacao().getDoador().getNome() : it->getReceptor().getNome();
+        std::cout << ", " << pessoa << std::endl;
+    }
+    int opcaoEscolhida = Auxiliar::getOpcao(0, i);
+    if (opcaoEscolhida == 0)
+    {
+        return -1;
+    }
+    else
+    {
+        return (opcaoEscolhida - 1);
+    }
 }
 
 void Telas::dadosSolicitacao(Solicitacao solicitacao, bool minhaSolicitacao)
@@ -458,23 +538,40 @@ void Telas::dadosSolicitacao(Solicitacao solicitacao, bool minhaSolicitacao)
         telefone = solicitacao.getReceptor().getTelefone();
     }
     std::cout << std::endl;
-    std::cout << nome << std::endl;
-    std::cout << solicitacao.getDoacao().getResiduo().getNome();
+    std::cout << " " << nome << std::endl;
+    std::cout << " " << solicitacao.getDoacao().getResiduo().getNome();
     std::cout << ", " << solicitacao.getDoacao().getQuantidade() << std::endl;
-    std::cout << "Local: " << solicitacao.getDoacao().getDoador().getEndereco() << std::endl;
-    std::cout << "Data: " << solicitacao.getDataEntrega() << std::endl;
-    std::cout << "Telefone: " << telefone << std::endl;
+
+    std::string endereco;
+    if (solicitacao.getTipoEntrega() == 1)
+    {
+        endereco = solicitacao.getDoacao().getDoador().getEndereco();
+    }
+    else if (solicitacao.getTipoEntrega() == 2)
+    {
+        endereco = solicitacao.getReceptor().getEndereco();
+    }
+    else
+    {
+        endereco = solicitacao.getProposta();
+    }
+    std::cout << " Local: " << endereco << std::endl;
+    std::cout << " Data: " << solicitacao.getDataEntrega() << std::endl;
+    std::cout << " Telefone: " << telefone << std::endl;
 }
 
 void Telas::rankingDoadores(Usuario &usuario)
 {
     Telas::cabecalho();
     std::cout << "      RANKING DE DOADORES" << std::endl;
-    std::vector<Doador> doadores = rDoadores();
-    for (std::vector<Doador>::iterator it = doadores.begin(); it != doadores.end(); ++it)
+
+    Gerenciamento conexao = Gerenciamento();
+    std::map<int, Usuario> doadores = conexao.rankingDoadores();
+
+    for (std::map<int, Usuario>::iterator it = doadores.begin(); it != doadores.end(); ++it)
     {
-        std::cout << it->getNome();
-        std::cout << ", x doacoes" << std::endl;
+        std::cout << it->first << ". " << it->second.getNome() << ", " << it->second.getTelefone();
+        std::cout << ", " << it->second.getEndereco() << " doacoes" << std::endl;
     }
 
     Auxiliar::pausarSistema();

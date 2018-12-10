@@ -157,23 +157,23 @@ bool Gerenciamento::cadastrarSolicitacao(Solicitacao &solicitacao)
     }
 }
 
-std::vector<Solicitacao> Gerenciamento::getSolicitacoes(std::string idUsuario, bool minhasSolicitacoes)
+std::vector<Solicitacao> Gerenciamento::getSolicitacoes(std::string id, bool minhasSolicitacoes)
 {
     std::vector<Solicitacao> solicitacoes;
 
     std::string campos = "d.id_doacao, d.quantidade, re.id_residuo, re.nome, re.armazenamento, dr.id_usuario, dr.nome, dr.documento, dr.telefone, dr.endereco, r.id_usuario, r.nome, r.documento, r.telefone, r.endereco, sl.id_solicitacao, proposta, resposta, tipo_entrega, data_entrega, re.tipo";
 
-    std::string condicaoDoacao = "d.id_doacao = sl.id_doacao AND d.disponibilidade = 1";
+    std::string condicaoDoacao = "d.id_doacao = sl.id_doacao AND d.disponibilidade = 1 AND sl.status = 1";
 
     std::string condicaoReceptor = "r.id_usuario = sl.id_receptor";
 
-    condicaoReceptor += minhasSolicitacoes ? (" AND r.id_usuario = " + idUsuario) : "";
-
     std::string condicaoDoador = "dr.id_usuario = d.id_usuario";
 
-    condicaoDoador += !minhasSolicitacoes ? (" AND dr.id_usuario = " + idUsuario) : "";
-
     std::string condicaoResiduo = "re.id_residuo = d.id_residuo";
+
+    condicaoReceptor += minhasSolicitacoes ? (" AND r.id_usuario = " + id) : "";
+
+    condicaoDoacao += !minhasSolicitacoes ? (" AND d.id_doacao = " + id) : "";
 
     std::string consulta = "SELECT " + campos + " FROM solicitacao as sl INNER JOIN doacao as d ON " + condicaoDoacao + " INNER JOIN usuario as r ON " + condicaoReceptor + " INNER JOIN residuo as re ON " + condicaoResiduo + " INNER JOIN usuario as dr ON " + condicaoDoador;
 
@@ -181,6 +181,7 @@ std::vector<Solicitacao> Gerenciamento::getSolicitacoes(std::string idUsuario, b
     {
         while ((linhas = mysql_fetch_row(this->resp)) != NULL)
         {
+            std::string proposta = linhas[16] ? linhas[16] : "";
             std::vector<std::string> camposSolicitacao = {
                 linhas[0],
                 linhas[1],
@@ -198,10 +199,11 @@ std::vector<Solicitacao> Gerenciamento::getSolicitacoes(std::string idUsuario, b
                 linhas[13],
                 linhas[14],
                 linhas[15],
-                linhas[16],
-                linhas[17],
+                proposta,
+                "",
                 linhas[18],
                 linhas[19]};
+
             Solicitacao solicitacao = this->configurarSolicitacao(camposSolicitacao);
             solicitacoes.push_back(solicitacao);
         }
@@ -237,6 +239,78 @@ Solicitacao Gerenciamento::configurarSolicitacao(std::vector<std::string> campos
     solicitacao.setIdSolicitacao(camposSolicitacao[15]);
 
     return solicitacao;
+}
+
+bool Gerenciamento::alterarStatusSolicitacao(std::string idSolicitacao, std::string idDoacao, int status)
+{
+    std::string comando = "UPDATE solicitacao SET status = " + std::to_string(status) + " WHERE id_solicitacao = " + idSolicitacao;
+
+    int resultado = this->alterar(comando);
+    if (resultado > 0)
+    {
+        if (status == 3)
+        {
+            this->alterarStatusDoacao(idDoacao, 2);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Gerenciamento::alterarStatusDoacao(std::string idDoacao, int status)
+{
+    std::string comando = "UPDATE doacao SET disponibilidade = " + std::to_string(status) + " WHERE id_doacao = " + idDoacao;
+
+    int resultado = this->alterar(comando);
+    if (resultado > 0)
+    {
+        if (status == 2)
+        {
+            std::string comandoSolicitacoes = "UPDATE solicitacao SET status = 2 WHERE status != 3 AND id_doacao = " + idDoacao;
+            this->alterar(comandoSolicitacoes);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+std::map<int, Usuario> Gerenciamento::rankingDoadores()
+{
+    std::map<int, Usuario> ranking;
+
+    std::string consulta = "SELECT  DISTINCT dr.id_usuario, dr.nome, dr.telefone, COUNT(dr.id_usuario) as numero FROM solicitacao AS s INNER JOIN doacao AS d ON d.id_doacao = s.id_doacao INNER JOIN usuario AS dr ON dr.id_usuario = d.id_usuario AND s.status = 3  GROUP BY dr.id_usuario ORDER BY numero DESC";
+
+    if (this->selecionar(consulta))
+    {
+        int i = 1;
+        while ((linhas = mysql_fetch_row(this->resp)) != NULL)
+        {
+            Usuario usuario = Usuario(linhas[1], "", linhas[2], linhas[3]);
+            ranking[i] = usuario;
+            i++;
+        }
+    }
+    return ranking;
+}
+
+int Gerenciamento::alterar(std::string comando)
+{
+    const char *query = comando.c_str();
+    int res = mysql_query(&this->getConexao(), query);
+
+    if (!res)
+        return 1;
+    else
+    {
+        printf("Erro na inserção %d : %s\n", mysql_errno(&this->getConexao()), mysql_error(&this->getConexao()));
+        return 0;
+    }
 }
 
 int Gerenciamento::inserir(std::string comando)

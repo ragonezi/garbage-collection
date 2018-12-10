@@ -42,6 +42,9 @@ public:
 
   static void listaSolicitacoes(Usuario &);
   static void dadosSolicitacao(Solicitacao, bool);
+  static void listarMinhasSolicitacoes(Usuario &usuario);
+  static void listarSolicitacoesDoacao(Usuario &usuario);
+  static int escolherSolicitacao(std::vector<Solicitacao>, bool);
 
   static void rankingDoadores(Usuario &);
 

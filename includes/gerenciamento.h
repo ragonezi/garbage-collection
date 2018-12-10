@@ -2,6 +2,7 @@
 #define GERENCIAMENTO_H
 
 #include <string>
+#include <map>
 #include "conexao.h"
 #include "usuario.h"
 #include "residuo.h"
@@ -24,6 +25,7 @@ public:
   // Metodos gerais
   bool selecionar(std::string);
   int inserir(std::string);
+  int alterar(std::string);
   void limparResultado();
 
   // Metodos para o usuario
@@ -38,11 +40,16 @@ public:
   bool cadastrarDoacao(Doacao &);
   std::vector<Doacao> getDoacoes(std::string, int, bool);
   Doacao configurarDoacao(std::vector<std::string>, int);
+  bool alterarStatusDoacao(std::string, int);
 
   // Solicitacao
   bool cadastrarSolicitacao(Solicitacao &);
   std::vector<Solicitacao> getSolicitacoes(std::string, bool);
   Solicitacao configurarSolicitacao(std::vector<std::string>);
+  bool alterarStatusSolicitacao(std::string, std::string, int);
+
+  // Ranking
+  std::map<int, Usuario> rankingDoadores();
 
   Residuo residuosInteresse(int);
   Doacao doacoesUsuario(int);
