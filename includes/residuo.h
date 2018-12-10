@@ -9,7 +9,7 @@ private:
   std::string nome;
   std::string armazenamento;
   int tipo;
-  int idResiduo;
+  std::string idResiduo;
 
 public:
   Residuo();
@@ -17,9 +17,12 @@ public:
   void setNome(std::string);
   void setArmazenamento(std::string);
   void setTipo(int);
+  void setIdResiduo(std::string);
+
   std::string getNome();
   std::string getArmazenamento();
   int getTipo();
+  std::string getIdResiduo();
 };
 
 #endif

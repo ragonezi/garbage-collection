@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdlib.h>
+#include "gerenciamento.h"
 #include "auxiliar.h"
 #include "usuario.h"
 #include "residuo.h"
@@ -16,6 +17,9 @@
 
 class Telas
 {
+
+private:
+  static Gerenciamento conexao;
 
 public:
   static void telaInicial();

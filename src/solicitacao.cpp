@@ -49,6 +49,11 @@ void Solicitacao::setDataEntrega(std::string dataEntrega)
     this->dataEntrega = dataEntrega;
 }
 
+void Solicitacao::setIdSolicitacao(std::string idSolicitacao)
+{
+    this->idSolicitacao = idSolicitacao;
+}
+
 void Solicitacao::setTipoEntrega(int tipoEntrega)
 {
     this->tipoEntrega = tipoEntrega;
@@ -82,6 +87,11 @@ std::string Solicitacao::getResposta()
 std::string Solicitacao::getDataEntrega()
 {
     return this->dataEntrega;
+}
+
+std::string Solicitacao::getIdSolicitacao()
+{
+    return this->idSolicitacao;
 }
 
 int Solicitacao::getTipoEntrega()

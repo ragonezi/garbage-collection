@@ -20,7 +20,7 @@ void Conexao::abrirConexao()
     }
 }
 
-MYSQL Conexao::getConexao()
+MYSQL &Conexao::getConexao()
 {
     return this->instanciaConexao;
 }

@@ -30,6 +30,11 @@ void Pessoa::setEndereco(std::string endereco)
     this->endereco = endereco;
 }
 
+void Pessoa::setIdPessoa(std::string idPessoa)
+{
+    this->idPessoa = idPessoa;
+}
+
 std::string Pessoa::getNome()
 {
     return this->nome;
@@ -48,4 +53,9 @@ std::string Pessoa::getTelefone()
 std::string Pessoa::getEndereco()
 {
     return this->endereco;
+}
+
+std::string Pessoa::getIdPessoa()
+{
+    return this->idPessoa;
 }

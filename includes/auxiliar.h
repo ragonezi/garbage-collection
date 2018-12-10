@@ -21,7 +21,7 @@ public:
   static int getNumero();
   static int getNumeroPositivo();
   static int numero(int &);
-  static int getDocumento();
+  static std::string getDocumento();
   static int confirmar();
   static int confirmarCadastro();
   static int confirmarSolicitacao();

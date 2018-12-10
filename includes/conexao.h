@@ -20,7 +20,7 @@ private:
 
 public:
   Conexao();
-  MYSQL getConexao();
+  MYSQL &getConexao();
   void abrirConexao();
   void fecharConexao();
 };
