@@ -1,3 +1,17 @@
+CREATE DATABASE trabalho_ps2;
+
+GRANT all on trabalho_ps2.* to guest identified by "guest";
+
+flush privileges;
+
+CREATE USER 'trabalho_ps2'@'localhost' IDENTIFIED BY 'teste';
+
+GRANT ALL PRIVILEGES ON * . * TO 'trabalho_ps2'@'localhost';
+
+connect trabalho_ps2;
+
+
+
 -- MySQL dump 10.13  Distrib 8.0.13, for Win64 (x86_64)
 --
 -- Host: localhost    Database: trabalho_ps2
@@ -26,14 +40,14 @@ CREATE TABLE `doacao` (
   `id_doacao` int(11) NOT NULL AUTO_INCREMENT,
   `id_residuo` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `quantidade` int(11) NOT NULL,
+  `quantidade` varchar(50) NOT NULL,
   `disponibilidade` int(11) NOT NULL,
   PRIMARY KEY (`id_doacao`),
   KEY `residuo_doacao_idx` (`id_residuo`),
   KEY `doacao_usuario_idx` (`id_usuario`),
   CONSTRAINT `doacao_residuo` FOREIGN KEY (`id_residuo`) REFERENCES `residuo` (`id_residuo`),
   CONSTRAINT `doacao_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +56,7 @@ CREATE TABLE `doacao` (
 
 LOCK TABLES `doacao` WRITE;
 /*!40000 ALTER TABLE `doacao` DISABLE KEYS */;
+INSERT INTO `doacao` VALUES (1,1,1,'1',1),(2,1,4,'10 unidades',1),(3,2,4,'20 unidades',1);
 /*!40000 ALTER TABLE `doacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +73,7 @@ CREATE TABLE `residuo` (
   `tipo` int(11) NOT NULL,
   `armazenamento` varchar(100) NOT NULL,
   PRIMARY KEY (`id_residuo`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +82,7 @@ CREATE TABLE `residuo` (
 
 LOCK TABLES `residuo` WRITE;
 /*!40000 ALTER TABLE `residuo` DISABLE KEYS */;
-INSERT INTO `residuo` VALUES (1,'Pilha',1,'Local seco, com temperatura amena e devidamente protegido.');
+INSERT INTO `residuo` VALUES (1,'Pilha',1,'Local seco, com temperatura amena e devidamente protegido.'),(2,'Lampada',2,'Local seco, com temperatura ambiente e protegido de impactos.'),(3,'Lampada',1,'Local protegido de impactos');
 /*!40000 ALTER TABLE `residuo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,12 +128,14 @@ CREATE TABLE `solicitacao` (
   `status` int(11) NOT NULL,
   `proposta` varchar(200) DEFAULT NULL,
   `resposta` varchar(200) DEFAULT NULL,
+  `tipo_entrega` int(11) NOT NULL,
+  `data_entrega` varchar(50) NOT NULL,
   PRIMARY KEY (`id_solicitacao`),
   KEY `solicitacao_receptor_idx` (`id_receptor`),
   KEY `solicitacao_doacao_idx` (`id_doacao`),
   CONSTRAINT `solicitacao_doacao` FOREIGN KEY (`id_doacao`) REFERENCES `doacao` (`id_doacao`),
   CONSTRAINT `solicitacao_receptor` FOREIGN KEY (`id_receptor`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,6 +144,7 @@ CREATE TABLE `solicitacao` (
 
 LOCK TABLES `solicitacao` WRITE;
 /*!40000 ALTER TABLE `solicitacao` DISABLE KEYS */;
+INSERT INTO `solicitacao` VALUES (1,2,1,1,'','',1,'10 de dezembro'),(2,2,1,1,'Rua nova','',3,'10 de dezembro');
 /*!40000 ALTER TABLE `solicitacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +164,7 @@ CREATE TABLE `usuario` (
   `senha` varchar(45) NOT NULL,
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `documento_UNIQUE` (`documento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,6 +173,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (1,'LUcas','10710045654','993210509','Rua 1','teste'),(2,'Nova pessoa','Teste','Novo','Novo','teste'),(4,'Anselmo','10792083563','663165165','Rua muquicaba','teste');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -167,4 +186,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-25 14:59:45
+-- Dump completed on 2018-12-09 23:43:48
