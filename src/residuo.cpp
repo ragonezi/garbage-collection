@@ -24,6 +24,11 @@ void Residuo::setTipo(int tipo)
     this->tipo = tipo;
 }
 
+void Residuo::setIdResiduo(std::string idResiduo)
+{
+    this->idResiduo = idResiduo;
+}
+
 std::string Residuo::getArmazenamento()
 {
     return this->armazenamento;
@@ -37,4 +42,9 @@ std::string Residuo::getNome()
 int Residuo::getTipo()
 {
     return this->tipo;
+}
+
+std::string Residuo::getIdResiduo()
+{
+    return this->idResiduo;
 }

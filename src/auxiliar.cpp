@@ -100,7 +100,7 @@ int Auxiliar::numero(int &opcao)
     }
 }
 
-int Auxiliar::getDocumento()
+std::string Auxiliar::getDocumento()
 {
 
     std::string input;
@@ -131,12 +131,7 @@ int Auxiliar::getDocumento()
         }
     } while (opcaoIncorreta);
 
-    std::stringstream ss;
-    int numeroDocumento;
-    for (unsigned i = 0; i < sizeof documento / sizeof documento[0]; ++i)
-        ss << documento[i];
-    ss >> numeroDocumento;
-    return numeroDocumento;
+    return input;
 }
 
 bool Auxiliar::validaCNPJ(const int *const cnpj)

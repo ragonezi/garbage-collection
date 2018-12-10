@@ -11,7 +11,7 @@ private:
   std::string documento;
   std::string telefone;
   std::string endereco;
-  int idPessoa;
+  std::string idPessoa;
 
 public:
   Pessoa();
@@ -21,11 +21,13 @@ public:
   void setDocumento(std::string);
   void setTelefone(std::string);
   void setEndereco(std::string);
+  void setIdPessoa(std::string);
 
   std::string getNome();
   std::string getDocumento();
   std::string getTelefone();
   std::string getEndereco();
+  std::string getIdPessoa();
 };
 
 #endif

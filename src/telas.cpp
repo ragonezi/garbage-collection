@@ -2,51 +2,31 @@
 
 // Temporario
 
-std::vector<Residuo> rSolidos()
-{
-    std::vector<Residuo> residuosSolidos;
-    Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
-    Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
-    residuosSolidos.push_back(r1);
-    residuosSolidos.push_back(r2);
-    return residuosSolidos;
-}
+// std::vector<Doacao> dSolidos()
+// {
+//     std::vector<Doacao> doacoesResiduosSolidos;
+//     Doador *doador1 = new Doador("Teste", "1000", "10", "10");
+//     Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
+//     Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
+//     Doacao d1 = Doacao(r1, *doador1, "10 unidades", 0);
+//     Doacao d2 = Doacao(r2, *doador1, "20 unidades", 0);
+//     doacoesResiduosSolidos.push_back(d1);
+//     doacoesResiduosSolidos.push_back(d2);
+//     return doacoesResiduosSolidos;
+// }
 
-std::vector<Residuo> rLiquidos()
-{
-    std::vector<Residuo> residuosLiquidos;
-    Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
-    Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
-    residuosLiquidos.push_back(r3);
-    residuosLiquidos.push_back(r4);
-    return residuosLiquidos;
-}
-
-std::vector<Doacao> dSolidos()
-{
-    std::vector<Doacao> doacoesResiduosSolidos;
-    Doador *doador1 = new Doador("Teste", "1000", "10", "10");
-    Residuo r1 = Residuo("Pilha", "Local seco com temperatura amena", 1);
-    Residuo r2 = Residuo("Lampada", "Local seco com temperatura amena em recipiente coberto", 1);
-    Doacao d1 = Doacao(r1, *doador1, "10 unidades", 0);
-    Doacao d2 = Doacao(r2, *doador1, "20 unidades", 0);
-    doacoesResiduosSolidos.push_back(d1);
-    doacoesResiduosSolidos.push_back(d2);
-    return doacoesResiduosSolidos;
-}
-
-std::vector<Doacao> dLiquidos()
-{
-    std::vector<Doacao> doacoesResiduosLiquidos;
-    Doador *doador1 = new Doador("Teste", "1000", "10", "10");
-    Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
-    Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
-    Doacao d3 = Doacao(r3, *doador1, "10 baldes", 0);
-    Doacao d4 = Doacao(r4, *doador1, "20 baldes", 0);
-    doacoesResiduosLiquidos.push_back(d3);
-    doacoesResiduosLiquidos.push_back(d4);
-    return doacoesResiduosLiquidos;
-}
+// std::vector<Doacao> dLiquidos()
+// {
+//     std::vector<Doacao> doacoesResiduosLiquidos;
+//     Doador *doador1 = new Doador("Teste", "1000", "10", "10");
+//     Residuo r3 = Residuo("Detergente", "Local seco com temperatura amena em recipiente coberto", 2);
+//     Residuo r4 = Residuo("Cloro", "Local seco com temperatura amena em recipiente coberto", 2);
+//     Doacao d3 = Doacao(r3, *doador1, "10 baldes", 0);
+//     Doacao d4 = Doacao(r4, *doador1, "20 baldes", 0);
+//     doacoesResiduosLiquidos.push_back(d3);
+//     doacoesResiduosLiquidos.push_back(d4);
+//     return doacoesResiduosLiquidos;
+// }
 
 std::vector<Doador> rDoadores()
 {
@@ -66,6 +46,7 @@ void Telas::telaInicial()
 {
     int opcao = 0;
     bool opcaoIncorreta;
+
     Telas::cabecalho();
     std::cout << " 1.Login" << std::endl;
     std::cout << " 2.Cadastro" << std::endl;
@@ -92,8 +73,23 @@ Usuario &Telas::login()
     std::getline(std::cin, senha);
     std::cout << std::endl;
     // ( FUNÇÃO PARA BUSCAR O REGISTRO NO BANCO E VALIDAR ENTRADA )
-    Usuario *usuario = new Usuario("Teste", documento, senha, "Teste");
-    Telas::menuPrincipal(*usuario);
+    Usuario *usuario = new Usuario();
+    usuario->setDocumento(documento);
+
+    Gerenciamento conexao = Gerenciamento();
+
+    if (conexao.login(*usuario, senha))
+    {
+        Telas::menuPrincipal(*usuario);
+    }
+    else
+    {
+        std::cout << "Usuario nao encontrado!" << std::endl;
+        Auxiliar::pausarSistema();
+        Telas::telaInicial();
+    }
+
+    conexao.fecharConexao();
 }
 
 Usuario &Telas::cadastro()
@@ -102,11 +98,20 @@ Usuario &Telas::cadastro()
     std::cout << "                CADASTRO" << std::endl
               << std::endl;
     std::string nome, documento, telefone, endereco, senha, confirmacaoSenha;
-    bool senhaIncorreta;
+    bool senhaIncorreta, disponibilidadeDocumento;
+
+    Gerenciamento conexao = Gerenciamento();
 
     std::cout << " CPF/CPNJ: ";
-    documento = Auxiliar::getDocumento();
-    std::cin.ignore();
+    do
+    {
+        documento = Auxiliar::getDocumento();
+        disponibilidadeDocumento = conexao.disponibilidadeDocumento(documento);
+        if (!disponibilidadeDocumento)
+        {
+            std::cout << "Este documento ja esta sendo utilizado, tente novamente: ";
+        }
+    } while (!disponibilidadeDocumento);
 
     std::cout << " Nome: ";
     std::getline(std::cin, nome);
@@ -132,9 +137,20 @@ Usuario &Telas::cadastro()
             senhaIncorreta = false;
         }
     } while (senhaIncorreta);
-    Usuario *usuario = new Usuario(nome, documento, senha, endereco);
-    // ( FUNCAO PARA CADASTRAR O USUARIO NO BANCO )
-    Telas::menuPrincipal(*usuario);
+    Usuario *usuario = new Usuario(nome, documento, telefone, endereco);
+
+    if (conexao.cadastro(*usuario, senha))
+    {
+        std::cout << "Usuario cadastrado com sucesso!" << std::endl;
+        Auxiliar::pausarSistema();
+        Telas::menuPrincipal(*usuario);
+    }
+    else
+    {
+        std::cout << "Erro ao cadastrar o usuario!" << std::endl;
+        Auxiliar::pausarSistema();
+        Telas::telaInicial();
+    }
 }
 
 void Telas::menuPrincipal(Usuario &usuario)
@@ -194,6 +210,7 @@ void Telas::cadastrarResiduo(Usuario &usuario)
         std::getline(std::cin, quantidade);
 
         Doador *doador = new Doador(usuario.getNome(), usuario.getDocumento(), usuario.getTelefone(), usuario.getEndereco());
+        doador->setIdPessoa(usuario.getIdPessoa());
         Doacao doacao = Doacao(residuo, *doador, quantidade, 1);
         std::cout << "\n " << doacao.getResiduo().getNome() << ", " << doacao.getQuantidade() << std::endl;
 
@@ -201,9 +218,17 @@ void Telas::cadastrarResiduo(Usuario &usuario)
 
         if (opcao == 1)
         {
-            usuario.addDoacao(doacao);
-            std::cout << " Cadastro concluido!" << std::endl;
-            // Aqui os codigos do banco
+            Gerenciamento conexao = Gerenciamento();
+            if (conexao.cadastrarDoacao(doacao))
+            {
+                usuario.addDoacao(doacao);
+                std::cout << " Cadastro concluido!" << std::endl;
+                // Aqui os codigos do banco
+            }
+            else
+            {
+                std::cout << "Erro ao cadastrar a doacao!" << std::endl;
+            }
         }
         else
         {
@@ -224,8 +249,9 @@ int Telas::escolherTipoResiduo()
 
 Residuo Telas::escolherResiduo(int tipoResiduo)
 {
+    Gerenciamento conexao = Gerenciamento();
 
-    std::vector<Residuo> residuos = tipoResiduo == 1 ? rSolidos() : rLiquidos();
+    std::vector<Residuo> residuos = conexao.getResiduos(tipoResiduo);
     int i = 0;
     std::cout << std::endl;
     for (std::vector<Residuo>::iterator it = residuos.begin(); it != residuos.end(); ++it)
@@ -244,7 +270,9 @@ void Telas::cadastrarSolicitacao(Usuario &usuario)
 
     int tipoResiduo = Telas::escolherTipoResiduo();
 
-    std::vector<Doacao> doacoesDisponiveis = (tipoResiduo == 1) ? dSolidos() : dLiquidos();
+    Gerenciamento conexao = Gerenciamento();
+
+    std::vector<Doacao> doacoesDisponiveis = conexao.getDoacoes(usuario.getIdPessoa(), tipoResiduo, false);
 
     int indiceDoacao = Telas::escolherDoacao(doacoesDisponiveis);
 
@@ -264,10 +292,10 @@ void Telas::cadastrarSolicitacao(Usuario &usuario)
             std::cout << " 2.Meu endereco" << std::endl;
             std::cout << " 3.Outro";
             int opcaoEndereco = Auxiliar::getOpcao(1, 3);
+            std::string enderecoEntrega = "";
             if (opcaoEndereco == 3)
             {
                 std::cout << "\nNovo local: ";
-                std::string enderecoEntrega;
                 std::getline(std::cin, enderecoEntrega);
             }
 
@@ -279,12 +307,24 @@ void Telas::cadastrarSolicitacao(Usuario &usuario)
             if (confirmacao == 1)
             {
                 Receptor receptor = Receptor(usuario.getNome(), usuario.getDocumento(), usuario.getTelefone(), usuario.getEndereco());
-                Doacao *novaDoacao = new Doacao(doacaoSelecionada.getResiduo(), doacaoSelecionada.getDoador(), doacaoSelecionada.getQuantidade(), doacaoSelecionada.getDisponibilidade());
-                Solicitacao novaSolicitacao = Solicitacao(*novaDoacao, receptor, 1);
+                receptor.setIdPessoa(usuario.getIdPessoa());
+                // Doacao *novaDoacao = new Doacao(doacaoSelecionada.getResiduo(), doacaoSelecionada.getDoador(), doacaoSelecionada.getQuantidade(), doacaoSelecionada.getDisponibilidade());
+                Solicitacao novaSolicitacao = Solicitacao(doacaoSelecionada, receptor, 1);
                 novaSolicitacao.setTipoEntrega(opcaoEndereco);
                 novaSolicitacao.setDataEntrega(dataEntrega);
-                usuario.addSolicitacao(novaSolicitacao);
-                std::cout << "Solicitacao realizada com sucesso!" << std::endl;
+                novaSolicitacao.setProposta(enderecoEntrega);
+
+                Gerenciamento conexao = Gerenciamento();
+
+                if (conexao.cadastrarSolicitacao(novaSolicitacao))
+                {
+                    usuario.addSolicitacao(novaSolicitacao);
+                    std::cout << "Solicitacao realizada com sucesso!" << std::endl;
+                }
+                else
+                {
+                    std::cout << "Erro ao cadastrar a solicitacao!" << std::endl;
+                }
             }
             else
             {

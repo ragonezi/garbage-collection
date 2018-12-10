@@ -30,6 +30,11 @@ void Doacao::setDisponibilidade(unsigned int disponibilidade)
     this->disponibilidade = disponibilidade;
 }
 
+void Doacao::setIdDoacao(std::string idDoacao)
+{
+    this->idDoacao = idDoacao;
+}
+
 Residuo Doacao::getResiduo()
 {
     return this->residuo;
@@ -48,4 +53,9 @@ std::string Doacao::getQuantidade()
 int Doacao::getDisponibilidade()
 {
     return this->disponibilidade;
+}
+
+std::string Doacao::getIdDoacao()
+{
+    return this->idDoacao;
 }

@@ -9,7 +9,7 @@
 class Doacao
 {
 private:
-  int idDoacao;
+  std::string idDoacao;
   Residuo residuo;
   Doador doador;
   std::string quantidade;
@@ -22,10 +22,13 @@ public:
   void setDoador(Doador);
   void setQuantidade(std::string);
   void setDisponibilidade(unsigned int);
+  void setIdDoacao(std::string);
+
   Residuo getResiduo();
   Doador getDoador();
   std::string getQuantidade();
   int getDisponibilidade();
+  std::string getIdDoacao();
 };
 
 #endif

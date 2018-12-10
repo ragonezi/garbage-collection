@@ -15,7 +15,7 @@ private:
   std::string dataEntrega;
   unsigned int tipoEntrega;
   unsigned int status;
-  int idSolicitacao;
+  std::string idSolicitacao;
 
 public:
   Solicitacao();
@@ -30,6 +30,7 @@ public:
   void setResposta(std::string);
   void setTipoEntrega(int);
   void setDataEntrega(std::string);
+  void setIdSolicitacao(std::string);
 
   Doacao getDoacao();
   Receptor getReceptor();
@@ -38,6 +39,7 @@ public:
   int getStatus();
   int getTipoEntrega();
   std::string getDataEntrega();
+  std::string getIdSolicitacao();
 };
 
 #endif
